@@ -7,6 +7,7 @@ import { FileText, LinkIcon } from "lucide-react"
 import type { Note } from "@/lib/types"
 import { getNotes } from "@/lib/storage"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface NotesListProps {
   selectedTags?: string[]
@@ -34,9 +35,9 @@ export default function NotesList({ selectedTags = [] }: NotesListProps) {
         <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
         <h3 className="text-xl font-medium mb-2">No notes yet</h3>
         <p className="text-muted-foreground mb-6">Create your first note to get started</p>
-        <Button asChild>
-          <Link href="/notes/new">Create a new note</Link>
-        </Button>
+        <a href="/new-note">
+          <Button>Create a new note</Button>
+        </a>
       </div>
     )
   }
@@ -65,6 +66,15 @@ export default function NotesList({ selectedTags = [] }: NotesListProps) {
               <div className="flex items-start text-sm text-muted-foreground">
                 <LinkIcon className="h-3.5 w-3.5 mr-1 mt-0.5 shrink-0" />
                 <span className="line-clamp-1">{note.reference}</span>
+              </div>
+            )}
+            {note.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {note.tags.map((tag) => (
+                  <Badge key={tag} variant="secondary" className="text-xs uppercase">
+                    {tag}
+                  </Badge>
+                ))}
               </div>
             )}
           </CardContent>

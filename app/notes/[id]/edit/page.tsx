@@ -47,8 +47,8 @@ export default function EditNotePage({ params }: { params: { id: string } }) {
   }, [params.id, router])
 
   const handleAddTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()])
+    if (tagInput.trim() && !tags.includes(tagInput.trim().toUpperCase())) {
+      setTags([...tags, tagInput.trim().toUpperCase()])
       setTagInput("")
     }
   }
@@ -193,7 +193,7 @@ More notes here..."
             <div className="p-3 bg-muted/30 rounded-md mb-4 min-h-[60px]">
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
-                  <div key={tag} className="flex items-center bg-secondary rounded-md px-3 py-1.5 text-sm">
+                  <div key={tag} className="flex items-center bg-secondary rounded-md px-3 py-1.5 text-sm uppercase">
                     <span className="mr-2">{tag}</span>
                     <Button variant="ghost" size="sm" className="h-5 w-5 p-0" onClick={() => handleRemoveTag(tag)}>
                       <X className="h-3 w-3" />

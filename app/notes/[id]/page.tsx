@@ -56,10 +56,10 @@ export default function NotePage({ params }: { params: { id: string } }) {
   }
 
   const generateFlashcards = () => {
-    if (!note || markdownSections.length === 0) {
+    if (!note) {
       toast({
         title: "Cannot generate flashcards",
-        description: "This note doesn't have any sections to generate flashcards from.",
+        description: "Note data is not available.",
         variant: "destructive",
       })
       return
@@ -70,6 +70,22 @@ export default function NotePage({ params }: { params: { id: string } }) {
 
       // Create a flashcard for each section
       let flashcardsCreated = 0
+
+      // First, create a flashcard for the summary using the note title as the question
+      if (note.summary && note.summary.trim()) {
+        // Add the SUMMARY tag to the tags array for the summary flashcard
+        const summaryTags = [...note.tags, "SUMMARY"]
+
+        createFlashcard({
+          front: note.title,
+          back: note.summary.trim(),
+          noteId: params.id,
+          tags: summaryTags,
+        })
+        flashcardsCreated++
+      }
+
+      // Then create flashcards for each section
       markdownSections.forEach((section) => {
         if (section.heading && section.content.trim()) {
           createFlashcard({
@@ -85,7 +101,7 @@ export default function NotePage({ params }: { params: { id: string } }) {
       if (flashcardsCreated > 0) {
         toast({
           title: "Flashcards generated",
-          description: `Successfully created ${flashcardsCreated} flashcards from your note sections.`,
+          description: `Successfully created ${flashcardsCreated} flashcards from your note.`,
         })
       } else {
         toast({
@@ -189,7 +205,7 @@ export default function NotePage({ params }: { params: { id: string } }) {
                 <h2 className="text-sm font-medium mb-1">Tags</h2>
                 <div className="flex flex-wrap gap-1">
                   {note.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
+                    <Badge key={tag} variant="secondary" className="text-xs uppercase">
                       {tag}
                     </Badge>
                   ))}

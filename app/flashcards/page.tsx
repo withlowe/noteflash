@@ -146,6 +146,7 @@ export default function FlashcardsPage() {
                           key={tag}
                           checked={selectedTags.includes(tag)}
                           onCheckedChange={() => toggleTag(tag)}
+                          className="uppercase"
                         >
                           {tag}
                         </DropdownMenuCheckboxItem>
@@ -172,7 +173,7 @@ export default function FlashcardsPage() {
                     <Badge
                       key={tag}
                       variant="secondary"
-                      className="cursor-pointer px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80"
+                      className="cursor-pointer px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 uppercase"
                       onClick={() => toggleTag(tag)}
                     >
                       {tag} ×
@@ -221,7 +222,7 @@ export default function FlashcardsPage() {
                 <CardFooter className="px-4 py-3 border-t flex justify-between items-center mt-auto">
                   <div className="flex flex-wrap gap-1">
                     {card.tags.slice(0, 2).map((tag) => (
-                      <Badge key={tag} variant="secondary" className="text-xs px-2 py-0.5">
+                      <Badge key={tag} variant="secondary" className="text-xs px-2 py-0.5 uppercase">
                         {tag}
                       </Badge>
                     ))}

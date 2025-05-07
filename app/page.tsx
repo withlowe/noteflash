@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { PlusCircle, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -58,6 +57,7 @@ export default function Home() {
                         key={tag}
                         checked={selectedTags.includes(tag)}
                         onCheckedChange={() => toggleTag(tag)}
+                        className="uppercase"
                       >
                         {tag}
                       </DropdownMenuCheckboxItem>
@@ -65,12 +65,12 @@ export default function Home() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-              <Button asChild>
-                <Link href="/notes/new">
+              <a href="/new-note">
+                <Button>
                   <PlusCircle className="mr-2 h-4 w-4" />
                   New Note
-                </Link>
-              </Button>
+                </Button>
+              </a>
             </div>
           </div>
 
@@ -83,7 +83,7 @@ export default function Home() {
                   <Badge
                     key={tag}
                     variant="secondary"
-                    className="cursor-pointer px-2 py-1 text-sm bg-secondary hover:bg-secondary/80"
+                    className="cursor-pointer px-2 py-1 text-sm bg-secondary hover:bg-secondary/80 uppercase"
                     onClick={() => toggleTag(tag)}
                   >
                     {tag} ×

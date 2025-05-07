@@ -1,5 +1,7 @@
 "use client"
 
+import { Badge } from "@/components/ui/badge"
+
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -17,7 +19,9 @@ interface FlashcardCreatorProps {
 }
 
 export default function FlashcardCreator({ noteId, onClose }: FlashcardCreatorProps) {
-  const [flashcards, setFlashcards] = useState<Array<{ front: string; back: string }>>([{ front: "", back: "" }])
+  const [flashcards, setFlashcards] = useState<Array<{ front: string; back: string; isSummary?: boolean }>>([
+    { front: "", back: "" },
+  ])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [note, setNote] = useState<Note | null>(null)
 
@@ -47,6 +51,15 @@ export default function FlashcardCreator({ noteId, onClose }: FlashcardCreatorPr
 
     const generatedFlashcards = extractFlashcardsFromMarkdown(note.notes)
 
+    // Add a flashcard for the summary using the note title as the question
+    if (note.summary && note.summary.trim()) {
+      generatedFlashcards.unshift({
+        front: note.title,
+        back: note.summary.trim(),
+        isSummary: true, // Mark this as a summary flashcard
+      })
+    }
+
     if (generatedFlashcards.length === 0) {
       toast({
         title: "No flashcards generated",
@@ -60,7 +73,7 @@ export default function FlashcardCreator({ noteId, onClose }: FlashcardCreatorPr
 
     toast({
       title: "Flashcards generated",
-      description: `Generated ${generatedFlashcards.length} flashcards from your note sections.`,
+      description: `Generated ${generatedFlashcards.length} flashcards from your note.`,
     })
   }
 
@@ -90,13 +103,19 @@ export default function FlashcardCreator({ noteId, onClose }: FlashcardCreatorPr
     try {
       setIsSubmitting(true)
 
+      // Convert tags to uppercase
+      const uppercaseTags = note.tags.map((tag) => tag.toUpperCase())
+
       // Save each flashcard
       validFlashcards.forEach((card) => {
+        // If this is a summary flashcard, add the SUMMARY tag
+        const cardTags = card.isSummary ? [...uppercaseTags, "SUMMARY"] : uppercaseTags
+
         createFlashcard({
           front: card.front,
           back: card.back,
           noteId: noteId,
-          tags: note.tags,
+          tags: cardTags,
         })
       })
 
@@ -156,6 +175,13 @@ export default function FlashcardCreator({ noteId, onClose }: FlashcardCreatorPr
                   className="min-h-[100px]"
                 />
               </div>
+              {flashcard.isSummary && (
+                <div className="absolute top-2 right-10">
+                  <Badge variant="outline" className="uppercase">
+                    Summary
+                  </Badge>
+                </div>
+              )}
               {flashcards.length > 1 && (
                 <Button
                   variant="ghost"

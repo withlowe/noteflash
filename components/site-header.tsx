@@ -59,13 +59,9 @@ export function SiteHeader() {
                   >
                     Quiz
                   </Link>
-                  <Link
-                    href="/notes/new"
-                    className="text-base font-medium hover:text-primary transition-colors"
-                    onClick={closeMenu}
-                  >
+                  <a href="/new-note" className="text-base font-medium hover:text-primary transition-colors">
                     New Note
-                  </Link>
+                  </a>
                 </nav>
                 <div className="pt-4">
                   <ImportExport variant="text" />
@@ -94,18 +90,18 @@ export function SiteHeader() {
         </div>
         <div className="flex items-center gap-3">
           <ImportExport variant="icon" />
-          <Button size="sm" className="hidden sm:flex" asChild>
-            <Link href="/notes/new">
+          <a href="/new-note">
+            <Button size="sm" className="hidden sm:flex">
               <PlusCircle className="mr-2 h-4 w-4" />
               New Note
-            </Link>
-          </Button>
-          <Button size="icon" variant="ghost" className="sm:hidden" asChild>
-            <Link href="/notes/new">
+            </Button>
+          </a>
+          <a href="/new-note">
+            <Button size="icon" variant="ghost" className="sm:hidden">
               <PlusCircle className="h-5 w-5" />
               <span className="sr-only">New Note</span>
-            </Link>
-          </Button>
+            </Button>
+          </a>
           <ModeToggle />
         </div>
       </div>
