@@ -6,18 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Search, Tag, Edit, Clock, BookOpen } from "lucide-react"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { Search, Edit, Clock, BookOpen, TagIcon } from "lucide-react"
 import type { Flashcard } from "@/lib/types"
 import { getFlashcards, getAllTags, deleteFlashcard } from "@/lib/storage"
 import FlashcardReview from "@/components/flashcard-review"
 import { toast } from "@/components/ui/use-toast"
 import FlashcardStudy from "@/components/flashcard-study"
+import { TagFilterDropdown } from "@/components/tag-filter-dropdown"
 
 export default function FlashcardsPage() {
   const router = useRouter()
@@ -54,14 +49,11 @@ export default function FlashcardsPage() {
     // Filter by selected tags
     if (selectedTags.length > 0) {
       filtered = filtered.filter((card) => selectedTags.every((tag) => card.tags.includes(tag)))
+      console.log(`Filtered to ${filtered.length} cards matching tags: ${selectedTags.join(", ")}`)
     }
 
     setFilteredFlashcards(filtered)
   }, [flashcards, searchQuery, selectedTags])
-
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]))
-  }
 
   const clearFilters = () => {
     setSearchQuery("")
@@ -113,10 +105,7 @@ export default function FlashcardsPage() {
           onComplete={() => setReviewMode(false)}
         />
       ) : studyMode ? (
-        <FlashcardStudy
-          flashcards={filteredFlashcards.length > 0 ? filteredFlashcards : []}
-          onComplete={() => setStudyMode(false)}
-        />
+        <FlashcardStudy flashcards={filteredFlashcards} onComplete={() => setStudyMode(false)} />
       ) : (
         <>
           <div className="mb-6 space-y-4">
@@ -133,48 +122,38 @@ export default function FlashcardsPage() {
               </div>
               <div className="flex gap-2 flex-wrap">
                 {allTags.length > 0 && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline">
-                        <Tag className="mr-2 h-4 w-4" />
-                        Filter by Tag
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="max-h-[300px] overflow-y-auto">
-                      {allTags.map((tag) => (
-                        <DropdownMenuCheckboxItem
-                          key={tag}
-                          checked={selectedTags.includes(tag)}
-                          onCheckedChange={() => toggleTag(tag)}
-                          className="uppercase"
-                        >
-                          {tag}
-                        </DropdownMenuCheckboxItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <TagFilterDropdown
+                    availableTags={allTags}
+                    selectedTags={selectedTags}
+                    onTagsChange={setSelectedTags}
+                  />
                 )}
-                <Button onClick={() => setStudyMode(true)} disabled={filteredFlashcards.length === 0}>
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  Study Cards ({filteredFlashcards.length})
+                <Button onClick={() => setStudyMode(true)} disabled={filteredFlashcards.length === 0} className="gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  {selectedTags.length > 0
+                    ? `Study Filtered (${filteredFlashcards.length})`
+                    : `Study All (${filteredFlashcards.length})`}
                 </Button>
-                <Button onClick={() => setReviewMode(true)} disabled={dueFlashcards.length === 0}>
-                  <Clock className="mr-2 h-4 w-4" />
+                <Button onClick={() => setReviewMode(true)} disabled={dueFlashcards.length === 0} className="gap-2">
+                  <Clock className="h-4 w-4" />
                   Review Due ({dueFlashcards.length})
                 </Button>
               </div>
             </div>
 
             {(selectedTags.length > 0 || searchQuery) && (
-              <div className="p-3 bg-muted/30 rounded-md">
+              <div className="p-4 bg-muted/30 rounded-md">
                 <div className="flex flex-wrap gap-2 items-center">
-                  <span className="text-sm font-medium mr-1">Filtered by:</span>
+                  <div className="flex items-center gap-1">
+                    <TagIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">Filtered by:</span>
+                  </div>
                   {selectedTags.map((tag) => (
                     <Badge
                       key={tag}
                       variant="secondary"
                       className="cursor-pointer px-3 py-1.5 text-sm bg-secondary hover:bg-secondary/80 uppercase"
-                      onClick={() => toggleTag(tag)}
+                      onClick={() => setSelectedTags(selectedTags.filter((t) => t !== tag))}
                     >
                       {tag} ×
                     </Badge>

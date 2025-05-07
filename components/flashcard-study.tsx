@@ -2,9 +2,11 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { ChevronLeft, ChevronRight, RotateCcw, X } from "lucide-react"
 import type { Flashcard } from "@/lib/types"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
 
 interface FlashcardStudyProps {
   flashcards: Flashcard[]
@@ -29,6 +31,7 @@ export default function FlashcardStudy({ flashcards, onComplete }: FlashcardStud
   const currentCard = flashcards[currentIndex]
   const totalCards = flashcards.length
   const remainingCards = totalCards - studiedCards.size
+  const progressPercentage = (studiedCards.size / totalCards) * 100
 
   const handleNext = () => {
     if (!currentCard) return
@@ -84,57 +87,68 @@ export default function FlashcardStudy({ flashcards, onComplete }: FlashcardStud
 
   return (
     <div className="max-w-2xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">Study Flashcards</h2>
+      {/* Header with progress */}
+      <div className="flex justify-between items-center mb-4">
+        <div className="text-sm font-medium">
+          Card {currentIndex + 1} of {totalCards}
+        </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleReset}>
+          <Button variant="ghost" size="sm" onClick={handleReset} className="h-8">
             <RotateCcw className="mr-1 h-4 w-4" />
             Reset
           </Button>
-          <Button variant="outline" size="sm" onClick={onComplete}>
+          <Button variant="ghost" size="sm" onClick={onComplete} className="h-8">
             <X className="mr-1 h-4 w-4" />
             Exit
           </Button>
         </div>
       </div>
 
-      <div className="mb-4 flex justify-between items-center">
-        <div className="text-sm text-muted-foreground">
-          Card {currentIndex + 1} of {totalCards}
-        </div>
-        <div className="text-sm text-muted-foreground">
-          {remainingCards} card{remainingCards !== 1 ? "s" : ""} remaining
-        </div>
-      </div>
+      <Progress value={progressPercentage} className="h-2 mb-6" />
 
-      <Card className="mb-6">
+      {/* Flashcard */}
+      <Card className="mb-6 shadow-sm">
         <CardContent className="p-6">
-          <div className="min-h-[200px] flex flex-col justify-center">
-            <h3 className="text-xl font-medium mb-6 text-center">{currentCard.front}</h3>
-
-            {showAnswer ? (
-              <div className="border-t pt-6 mt-auto">
-                <div className="prose dark:prose-invert max-w-none">
-                  <div dangerouslySetInnerHTML={{ __html: currentCard.back }} />
-                </div>
-              </div>
-            ) : (
-              <div className="text-center mt-auto">
-                <Button onClick={() => setShowAnswer(true)}>Show Answer</Button>
-              </div>
-            )}
+          <div className="min-h-[150px] flex items-center justify-center">
+            <h3 className="text-xl font-medium text-center">{currentCard.front}</h3>
           </div>
+
+          {showAnswer && (
+            <div className="border-t pt-6 mt-6">
+              <div className="prose dark:prose-invert max-w-none">
+                <div dangerouslySetInnerHTML={{ __html: currentCard.back }} />
+              </div>
+
+              {/* Card tags */}
+              {currentCard.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-4">
+                  {currentCard.tags.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="text-xs uppercase">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
+
+        {!showAnswer && (
+          <CardFooter className="p-6 pt-0 flex justify-center">
+            <Button onClick={() => setShowAnswer(true)}>Show Answer</Button>
+          </CardFooter>
+        )}
       </Card>
 
+      {/* Navigation controls */}
       <div className="flex justify-between">
         <Button variant="outline" onClick={handlePrevious}>
-          <ChevronLeft className="mr-1 h-4 w-4" />
+          <ChevronLeft className="mr-2 h-4 w-4" />
           Previous
         </Button>
         <Button onClick={handleNext}>
           {studiedCards.has(currentCard.id) ? "Next" : "Mark as Studied"}
-          <ChevronRight className="ml-1 h-4 w-4" />
+          <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
     </div>
