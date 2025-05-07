@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowLeft, Edit, Trash, Wand2, ExternalLink } from "lucide-react"
+import { ArrowLeft, Edit, Trash, Wand2, ExternalLink, Clock, TagIcon, LinkIcon } from "lucide-react"
 import type { Note } from "@/lib/types"
 import { getNote, deleteNote, createFlashcard } from "@/lib/storage"
 import { formatDate } from "@/lib/utils"
@@ -166,7 +166,7 @@ export default function NotePage({ params }: { params: { id: string } }) {
                     <h3 className="font-medium">{section.heading}</h3>
                   </div>
                   <div className="lg:w-2/3 p-3">
-                    <div className="prose dark:prose-invert max-w-none prose-sm">
+                    <div className="prose dark:prose-invert max-w-none">
                       <div dangerouslySetInnerHTML={{ __html: section.content }} />
                     </div>
                   </div>
@@ -186,7 +186,9 @@ export default function NotePage({ params }: { params: { id: string } }) {
         <Card className="mb-4">
           <CardContent className="p-3">
             <h2 className="text-sm font-medium mb-1">Summary</h2>
-            <div className="whitespace-pre-wrap text-sm">{note.summary}</div>
+            <div className="prose dark:prose-invert max-w-none">
+              <div dangerouslySetInnerHTML={{ __html: note.summary.replace(/\n/g, "<br />") }} />
+            </div>
           </CardContent>
         </Card>
       )}
@@ -194,15 +196,21 @@ export default function NotePage({ params }: { params: { id: string } }) {
       {/* Metadata */}
       <Card className="mb-4">
         <CardContent className="p-3">
-          <div className="space-y-3">
-            <div>
-              <h2 className="text-sm font-medium mb-1">Last Updated</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="p-3 bg-muted/20 rounded-md">
+              <h2 className="text-sm font-medium mb-2 flex items-center">
+                <Clock className="h-4 w-4 mr-1.5" />
+                Last Updated
+              </h2>
               <p className="text-sm text-muted-foreground">{formatDate(note.updatedAt)}</p>
             </div>
 
             {note.tags.length > 0 && (
-              <div>
-                <h2 className="text-sm font-medium mb-1">Tags</h2>
+              <div className="p-3 bg-muted/20 rounded-md">
+                <h2 className="text-sm font-medium mb-2 flex items-center">
+                  <TagIcon className="h-4 w-4 mr-1.5" />
+                  Tags
+                </h2>
                 <div className="flex flex-wrap gap-1">
                   {note.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs uppercase">
@@ -214,19 +222,24 @@ export default function NotePage({ params }: { params: { id: string } }) {
             )}
 
             {note.reference && (
-              <div>
-                <h2 className="text-sm font-medium mb-1">Reference</h2>
+              <div className="p-3 bg-muted/20 rounded-md">
+                <h2 className="text-sm font-medium mb-2 flex items-center">
+                  <LinkIcon className="h-4 w-4 mr-1.5" />
+                  Reference
+                </h2>
                 <div className="text-sm flex items-center">
-                  {note.reference}
-                  {note.reference.startsWith("http") && (
+                  {note.reference.startsWith("http") ? (
                     <a
                       href={note.reference}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="ml-1 text-primary hover:text-primary/80"
+                      className="text-primary hover:text-primary/80 flex items-center"
                     >
-                      <ExternalLink className="h-3 w-3" />
+                      {note.reference}
+                      <ExternalLink className="h-3 w-3 ml-1" />
                     </a>
+                  ) : (
+                    note.reference
                   )}
                 </div>
               </div>
