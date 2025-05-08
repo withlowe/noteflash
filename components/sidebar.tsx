@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { PlusCircle, Book, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
@@ -15,15 +14,17 @@ export function SidebarContent({ className = "" }: { className?: string }) {
     setTags(getAllTags())
   }, [])
 
+  const navigateToNewNote = () => {
+    window.location.href = "/create-note"
+  }
+
   return (
     <div className={`space-y-6 ${className}`}>
       <div className="flex flex-col gap-2">
-        <Link href="/notes/new">
-          <Button className="w-full">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            New Note
-          </Button>
-        </Link>
+        <Button className="w-full" onClick={navigateToNewNote}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          New Note
+        </Button>
         <ImportExport />
       </div>
 
@@ -33,18 +34,18 @@ export function SidebarContent({ className = "" }: { className?: string }) {
           Navigation
         </h2>
         <nav className="space-y-1">
-          <Link href="/" className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-secondary">
+          <a href="/" className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-secondary">
             All Notes
-          </Link>
-          <Link href="/flashcards" className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-secondary">
+          </a>
+          <a href="/flashcards" className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-secondary">
             Flashcards
-          </Link>
-          <Link href="/due-review" className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-secondary">
+          </a>
+          <a href="/due-review" className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-secondary">
             Review
-          </Link>
-          <Link href="/quiz" className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-secondary">
+          </a>
+          <a href="/quiz" className="flex items-center px-3 py-2 text-sm rounded-md hover:bg-secondary">
             Quiz
-          </Link>
+          </a>
         </nav>
       </div>
 

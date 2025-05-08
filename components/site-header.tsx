@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
 import { PlusCircle, Menu, Book } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -26,40 +25,44 @@ export function SiteHeader() {
             </SheetTrigger>
             <SheetContent side="left" className="w-full sm:max-w-sm">
               <div className="flex flex-col gap-6 py-6">
-                <Link href="/" className="text-xl font-bold flex items-center" onClick={closeMenu}>
+                <a href="/" className="text-xl font-bold flex items-center" onClick={closeMenu}>
                   <Book className="mr-2 h-5 w-5" />
                   Super Learn
-                </Link>
+                </a>
                 <nav className="flex flex-col gap-4">
-                  <Link
+                  <a
                     href="/"
                     className="text-base font-medium hover:text-primary transition-colors"
                     onClick={closeMenu}
                   >
                     Notes
-                  </Link>
-                  <Link
+                  </a>
+                  <a
                     href="/flashcards"
                     className="text-base font-medium hover:text-primary transition-colors"
                     onClick={closeMenu}
                   >
                     Flashcards
-                  </Link>
-                  <Link
+                  </a>
+                  <a
                     href="/due-review"
                     className="text-base font-medium hover:text-primary transition-colors"
                     onClick={closeMenu}
                   >
                     Review
-                  </Link>
-                  <Link
+                  </a>
+                  <a
                     href="/quiz"
                     className="text-base font-medium hover:text-primary transition-colors"
                     onClick={closeMenu}
                   >
                     Quiz
-                  </Link>
-                  <a href="/new-note" className="text-base font-medium hover:text-primary transition-colors">
+                  </a>
+                  <a
+                    href="/create-note"
+                    className="text-base font-medium hover:text-primary transition-colors"
+                    onClick={closeMenu}
+                  >
                     New Note
                   </a>
                 </nav>
@@ -69,39 +72,46 @@ export function SiteHeader() {
               </div>
             </SheetContent>
           </Sheet>
-          <Link href="/" className="font-bold text-xl flex items-center">
+          <a href="/" className="font-bold text-xl flex items-center">
             <Book className="mr-2 h-5 w-5" />
             <span className="hidden sm:inline">Super Learn</span>
-          </Link>
+          </a>
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-base font-medium hover:text-primary transition-colors">
+            <a href="/" className="text-base font-medium hover:text-primary transition-colors">
               Notes
-            </Link>
-            <Link href="/flashcards" className="text-base font-medium hover:text-primary transition-colors">
+            </a>
+            <a href="/flashcards" className="text-base font-medium hover:text-primary transition-colors">
               Flashcards
-            </Link>
-            <Link href="/due-review" className="text-base font-medium hover:text-primary transition-colors">
+            </a>
+            <a href="/due-review" className="text-base font-medium hover:text-primary transition-colors">
               Review
-            </Link>
-            <Link href="/quiz" className="text-base font-medium hover:text-primary transition-colors">
+            </a>
+            <a href="/quiz" className="text-base font-medium hover:text-primary transition-colors">
               Quiz
-            </Link>
+            </a>
           </nav>
         </div>
         <div className="flex items-center gap-3">
           <ImportExport variant="icon" />
-          <a href="/new-note">
-            <Button size="sm" className="hidden sm:flex">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              New Note
-            </Button>
-          </a>
-          <a href="/new-note">
-            <Button size="icon" variant="ghost" className="sm:hidden">
-              <PlusCircle className="h-5 w-5" />
-              <span className="sr-only">New Note</span>
-            </Button>
-          </a>
+
+          {/* Direct HTML button with onclick handler */}
+          <button
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-9 px-4 py-2 hidden sm:flex"
+            onClick={() => (window.location.href = "/create-note")}
+          >
+            <PlusCircle className="mr-2 h-4 w-4" />
+            New Note
+          </button>
+
+          {/* Direct HTML button for mobile */}
+          <button
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-background text-muted-foreground hover:bg-accent hover:text-accent-foreground h-9 w-9 p-0 sm:hidden"
+            onClick={() => (window.location.href = "/create-note")}
+          >
+            <PlusCircle className="h-5 w-5" />
+            <span className="sr-only">New Note</span>
+          </button>
+
           <ModeToggle />
         </div>
       </div>

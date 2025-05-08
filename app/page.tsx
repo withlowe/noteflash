@@ -13,6 +13,7 @@ import {
 import NotesList from "@/components/notes-list"
 import { Search } from "@/components/search"
 import { getAllTags } from "@/lib/storage"
+import { toast } from "@/components/ui/use-toast"
 
 export default function Home() {
   const [selectedTags, setSelectedTags] = useState<string[]>([])
@@ -28,6 +29,19 @@ export default function Home() {
 
   const clearFilters = () => {
     setSelectedTags([])
+  }
+
+  const navigateToNewNote = () => {
+    try {
+      window.location.href = "/create-note"
+    } catch (error) {
+      console.error("Navigation error:", error)
+      toast({
+        title: "Navigation Error",
+        description: `Error: ${error instanceof Error ? error.message : String(error)}`,
+        variant: "destructive",
+      })
+    }
   }
 
   return (
@@ -65,12 +79,10 @@ export default function Home() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
-              <a href="/new-note">
-                <Button>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  New Note
-                </Button>
-              </a>
+              <Button onClick={navigateToNewNote}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                New Note
+              </Button>
             </div>
           </div>
 

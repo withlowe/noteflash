@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { FileText, LinkIcon } from "lucide-react"
 import type { Note } from "@/lib/types"
@@ -29,15 +28,21 @@ export default function NotesList({ selectedTags = [] }: NotesListProps) {
     }
   }, [notes, selectedTags])
 
+  const navigateToNewNote = () => {
+    window.location.href = "/create-note"
+  }
+
+  const navigateToNote = (id: string) => {
+    window.location.href = `/notes/${id}`
+  }
+
   if (notes.length === 0) {
     return (
       <div className="text-center py-12 bg-muted/20 rounded-lg">
         <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
         <h3 className="text-xl font-medium mb-2">No notes yet</h3>
         <p className="text-muted-foreground mb-6">Create your first note to get started</p>
-        <a href="/new-note">
-          <Button>Create a new note</Button>
-        </a>
+        <Button onClick={navigateToNewNote}>Create a new note</Button>
       </div>
     )
   }
@@ -57,11 +62,13 @@ export default function NotesList({ selectedTags = [] }: NotesListProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {filteredNotes.map((note) => (
-        <Card key={note.id} className="overflow-hidden border hover:border-primary/50 transition-colors h-full">
+        <Card
+          key={note.id}
+          className="overflow-hidden border hover:border-primary/50 transition-colors h-full cursor-pointer"
+          onClick={() => navigateToNote(note.id)}
+        >
           <CardContent className="p-4">
-            <Link href={`/notes/${note.id}`} className="hover:underline">
-              <h3 className="text-xl font-medium mb-2">{note.title}</h3>
-            </Link>
+            <h3 className="text-xl font-medium mb-2 hover:underline">{note.title}</h3>
             {note.reference && (
               <div className="flex items-start text-sm text-muted-foreground">
                 <LinkIcon className="h-3.5 w-3.5 mr-1 mt-0.5 shrink-0" />

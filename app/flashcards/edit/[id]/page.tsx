@@ -9,10 +9,19 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { X, Save, ArrowLeft } from "lucide-react"
+import { X, Save, ArrowLeft, Trash } from "lucide-react"
 import type { Flashcard } from "@/lib/types"
-import { getFlashcard, updateFlashcard } from "@/lib/storage"
+import { getFlashcard, updateFlashcard, deleteFlashcard } from "@/lib/storage"
 import { toast } from "@/components/ui/use-toast"
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function EditFlashcardPage({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -23,6 +32,7 @@ export default function EditFlashcardPage({ params }: { params: { id: string } }
   const [tags, setTags] = useState<string[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   useEffect(() => {
     const fetchedCard = getFlashcard(params.id)
@@ -87,7 +97,7 @@ export default function EditFlashcardPage({ params }: { params: { id: string } }
       })
 
       // Navigate back to flashcards
-      router.push("/flashcards")
+      window.location.href = "/flashcards"
     } catch (error) {
       console.error("Error updating flashcard:", error)
       toast({
@@ -96,6 +106,28 @@ export default function EditFlashcardPage({ params }: { params: { id: string } }
         variant: "destructive",
       })
       setIsSubmitting(false)
+    }
+  }
+
+  const handleDelete = () => {
+    try {
+      console.log("Deleting flashcard with ID:", params.id)
+      deleteFlashcard(params.id)
+
+      toast({
+        title: "Flashcard deleted",
+        description: "The flashcard has been deleted successfully",
+      })
+
+      // Use window.location for more reliable navigation
+      window.location.href = "/flashcards"
+    } catch (error) {
+      console.error("Error deleting flashcard:", error)
+      toast({
+        title: "Error",
+        description: "Failed to delete flashcard. Please try again.",
+        variant: "destructive",
+      })
     }
   }
 
@@ -114,7 +146,39 @@ export default function EditFlashcardPage({ params }: { params: { id: string } }
           <ArrowLeft className="mr-1 h-4 w-4" />
           Back to flashcards
         </Link>
-        <h1 className="text-3xl font-bold">Edit Flashcard</h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-3xl font-bold">Edit Flashcard</h1>
+
+          {/* Simple button that opens the controlled dialog */}
+          <Button variant="destructive" size="sm" onClick={() => setShowDeleteDialog(true)}>
+            <Trash className="mr-2 h-4 w-4" />
+            Delete
+          </Button>
+
+          {/* Controlled dialog */}
+          <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete this flashcard.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setShowDeleteDialog(false)}>Cancel</AlertDialogCancel>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    handleDelete()
+                    setShowDeleteDialog(false)
+                  }}
+                >
+                  Delete
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
 
       <Card>
@@ -174,7 +238,7 @@ export default function EditFlashcardPage({ params }: { params: { id: string } }
           </div>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button variant="outline" onClick={() => router.push("/flashcards")}>
+          <Button variant="outline" onClick={() => (window.location.href = "/flashcards")}>
             Cancel
           </Button>
           <Button onClick={handleSave} disabled={isSubmitting || !front.trim() || !back.trim()}>
